@@ -5,7 +5,7 @@ export default async function Home() {
   return (
     <div>
       <Link 
-        href={`/pages/simulation`}
+        href={`/pages/login`}
         className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
       >
         Simulation

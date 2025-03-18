@@ -1,3 +1,5 @@
+/* This is database connection file */
+
 import mysql from 'mysql2/promise';
 
 const pool = mysql.createPool({

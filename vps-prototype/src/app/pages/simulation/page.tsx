@@ -62,16 +62,7 @@ export default function Page() {
                 >
                     Continue
                 </button>
-            </div>
-
-
-            <div>
-                <TestMenu onSelectTest={handleTestSelect} />
-            </div>
-
-            <div>
-                <ActivityLog log={log}/>
-            </div>
+            </div>            
 
             <div>
                 <DiagnosisForm addLogEntry={addLogEntry} />
