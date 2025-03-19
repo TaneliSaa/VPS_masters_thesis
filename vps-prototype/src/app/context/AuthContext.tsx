@@ -6,6 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import { createContext } from "react";
 
 interface User {
+    id: any;
     username: string;
 }
 
@@ -26,7 +27,13 @@ export function AuthProvider({children} : {children: React.ReactNode}) {
             const res = await fetch("/api/me");
             if (res.ok) {
                 const data = await res.json();
-                setUser(data.user);
+                console.log("Fetched User from /api/me:", data);
+                if (data.user) {
+                    setUser({
+                        id: data.user.id,
+                        username: data.user.username,
+                    });
+                }
             }
         };
         fetchUser();

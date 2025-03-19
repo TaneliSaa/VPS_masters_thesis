@@ -9,24 +9,26 @@ export default function LoginPage() {
     //States
     const [username, setUsername] = useState("");
     const [password,setPassword] = useState("");
+    const [id,setId] = useState("");
     const router = useRouter();
     const {setUser} = useAuth();
 
+    //Login handler
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        //Fetch data from api/login. Id, username, and password
         const res = await fetch("/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ id,username, password }),
         });
-
-        const data = res.json();
 
         if (res.ok) {
             alert("Login successful!");
-            setUser({username});
+            setUser({id,username});
             router.push("/pages/simulation");
+            
         } else {
             alert("Login failed");
         };

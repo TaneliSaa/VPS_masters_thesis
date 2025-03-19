@@ -1,45 +1,29 @@
 'use client'
 import Image from 'next/image'
 import { useEffect, useState } from 'react';
-import TestMenu from '../../components/TestMenu';
-import ActivityLog from '../../components/ActivityLog';
-import DiagnosisForm from '../../components/DiagnosisForm';
+import ActivityLog from '@/app/components/ActivityLog';
+import DiagnosisForm from '@/app/components/DiagnosisForm';
+import InterActiveMenu from '@/app/components/InterActiveMenu';
 
-
-interface LogEntry {
-    type: string;
-    message: string;
-    timestamp: string;
-}
 
 
 export default function Page() {
     //States 
-    
-    const [isHidden, setIsHidden] = useState(true)
 
-    const [log, setLog] = useState<LogEntry[]>([]);
-
-     // Function to update logs
-     const addLogEntry = (type: string, message: string) => {
-        const newEntry = { type, message, timestamp: new Date().toLocaleTimeString() };
-        setLog((prevLog) => [...prevLog, newEntry]); // Append new log entry
-    };
 
     //Patient dialogue
     const patientSymptoms = "I have chest pain, shortness of breath, and nausea.";
 
-    //Hiding and showing components
-    const hiddenInputHandler = () => {
-        setIsHidden(!isHidden);
-    }
 
-    const handleTestSelect = (test: string) => {
-        console.log(`Selected test: ${test}`);
-    }
 
     return (
-        <div>
+
+        <div className=''>
+            
+            {/*Interactive menu*/}
+            <div className='w-64 bg-gray-800 text-white h-full shadow-md'>
+                <InterActiveMenu />
+            </div>
 
             {/*Image of the patient */}
             <div className="p-4 border rounded-lg shadow-lg max-w-md mx-auto">
@@ -56,17 +40,22 @@ export default function Page() {
             <div className='p-4 border rounded-lg shadow-lg max-w-md mx-auto'>
                 <h2 className="text-lg font-bold">Patient</h2>
                 <p className="mt-2">Hey doctor! {patientSymptoms}</p>
-                <button
-                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
-                    onClick={() => { hiddenInputHandler() }}
-                >
-                    Continue
-                </button>
-            </div>            
+                <button>Testi</button>
 
-            <div>
-                <DiagnosisForm addLogEntry={addLogEntry} />
             </div>
+
+            {/*Activity log*/}
+            <div>
+                <ActivityLog />
+            </div>
+            {/*Diagnosis form*/}
+            <div>
+                <DiagnosisForm />
+            </div>
+
+
+
+
 
         </div>
     )
