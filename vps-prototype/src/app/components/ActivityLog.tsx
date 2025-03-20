@@ -21,6 +21,19 @@ const ActivityLog: React.FC = () => {
         return now.toISOString().slice(0, 19).replace("T", " ");
     };
 
+    // Load activity logs from the localstorage
+    useEffect(() => {
+        const savedLogs = localStorage.getItem("activityLog");
+        if (savedLogs) {
+            setLog(JSON.parse(savedLogs));
+        }
+    }, []);
+
+    //Save activity logs to the localstorage every time there is changes to them
+    useEffect(() => {
+        localStorage.setItem("activityLog", JSON.stringify(log));
+    }, [log]);
+
     //Log entry adder
     const addLogEntry = async (type: string, message: string) => {
         //If user or user.id is missing, return error message (for debugging purposes)
@@ -37,7 +50,12 @@ const ActivityLog: React.FC = () => {
         };
 
         //Append existing log with new entries
-        setLog((prevLog) => [...prevLog, newEntry]);
+        setLog((prevLog) => {
+            const updatedLog = [...prevLog, newEntry];
+            //Save them to the localstorage
+            localStorage.setItem("activityLog", JSON.stringify(updatedLog));
+            return updatedLog;
+        });
 
         //Debugging console log to see if logs are send forward
         console.log("Sending log entry: ", { user_id: user.id, ...newEntry });

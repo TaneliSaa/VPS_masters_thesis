@@ -18,7 +18,7 @@ export default function Page() {
 
     return (
 
-        <div className=''>
+        <div>
             
             {/*Interactive menu*/}
             <div className='w-64 bg-gray-800 text-white h-full shadow-md'>
@@ -36,11 +36,13 @@ export default function Page() {
                 </Image>
             </div>
 
+            
+
             {/*Patient dialogue bar*/}
             <div className='p-4 border rounded-lg shadow-lg max-w-md mx-auto'>
                 <h2 className="text-lg font-bold">Patient</h2>
                 <p className="mt-2">Hey doctor! {patientSymptoms}</p>
-                <button>Testi</button>
+              
 
             </div>
 
@@ -48,15 +50,7 @@ export default function Page() {
             <div>
                 <ActivityLog />
             </div>
-            {/*Diagnosis form*/}
-            <div>
-                <DiagnosisForm />
-            </div>
-
-
-
-
-
+            
         </div>
     )
 
