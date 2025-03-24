@@ -5,15 +5,25 @@ import TakeTest from "./TakeTest";
 import DiagnosisForm from "./DiagnosisForm";
 import BloodTestResults from "./BloodTestResults";
 
-const InterActiveMenu = () => {
+const InterActiveMenu = ({
+    isDiagnosisOpen,
+    setIsDiagnosisOpen,
+    onSubmitDiagnosis,
+    selectedTool,
+    setSelectedTool
+}: {
+    isDiagnosisOpen: boolean;
+    setIsDiagnosisOpen: (val: boolean) => void;
+    onSubmitDiagnosis: () => void;
+    selectedTool: "CPR" | "defibrillator" | null;
+    setSelectedTool: (tool: "CPR" | "defibrillator" | null) => void;
+}) => {
 
     //States
     const [activeTab, setActiveTab] = useState<string | null>(null);
     const [isPatientInformationOpen, setIsPatientInformationOpen] = useState(false);
     const [selectedTest, setSelectedTest] = useState<string | null>(null);
-    const [isDiagnosisOpen, setIsDiagnosisOpen] = useState(false);
-    const [selectedTool, setSelectedTool] = useState<string | null>(null);
-    const [isBloodTestOpen,setIsBloodTestOpen] = useState(false);
+    const [isBloodTestOpen, setIsBloodTestOpen] = useState(false);
 
     //Dropdown menu system for take test and medical tool menus
     const toggleTab = (tab: string) => {
@@ -31,6 +41,8 @@ const InterActiveMenu = () => {
             document.body.style.cursor = "default";
         }
     }, [selectedTool])
+
+
 
 
     return (
@@ -162,12 +174,13 @@ const InterActiveMenu = () => {
             <DiagnosisForm
                 isOpen={isDiagnosisOpen}
                 onClose={() => setIsDiagnosisOpen(false)}
+                onSubmitDiagnosis={onSubmitDiagnosis}
             />
 
             <BloodTestResults
                 isOpen={isBloodTestOpen}
                 onClose={() => setIsBloodTestOpen(false)}
-            
+
             />
 
         </div>
