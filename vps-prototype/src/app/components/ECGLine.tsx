@@ -5,7 +5,7 @@
 import { useEffect, useRef } from "react";
 
 interface ECGLineProps {
-    rhythm?: "flatline";
+    rhythm?: "flatline" | "heartbeat";
 }
 
 const ECGLine: React.FC<ECGLineProps> = ({rhythm = "flatline"}) => {
@@ -28,17 +28,50 @@ const ECGLine: React.FC<ECGLineProps> = ({rhythm = "flatline"}) => {
             className="bg-black"
         >
 
-        <polyline
+        { rhythm === "flatline" ? (
+            <polyline
             points="0,24 300,24"
             stroke="lime"
             strokeWidth="2"
             fill="none"
         >
 
-        </polyline>
+        </polyline>) : (
 
+            <g>
+                <path
+                    d="
+                        M 0 24
+                        L 20 24
+                        L 30 0
+                        L 40 48
+                        L 50 24
+                        L 70 24
+                        L 80 10
+                        L 90 38
+                        L 95 36
+                        L 100 24
+                        L 300 24
+                        L 450 24
+                        "
+                        
+                    stroke="lime"
+                    strokeWidth="2"
+                    fill="none"
+                >
+                    <animateTransform
+                        attributeName="transform"
+                        type="translate"
+                        from="0"
+                        to="-100"
+                        dur="1.2s"
+                        repeatCount="indefinite"
+                    >
+                    </animateTransform>
+                </path>
+            </g>
+        )}
         </svg>
-
     );
 }
 

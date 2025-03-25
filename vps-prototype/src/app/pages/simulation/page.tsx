@@ -5,6 +5,8 @@ import ActivityLog from '@/app/components/ActivityLog';
 import InterActiveMenu from '@/app/components/InterActiveMenu';
 import PatientDialogue from '@/app/components/PatientDialogue';
 import VitalSigns from '@/app/components/VitalSigns';
+import { useRouter } from 'next/navigation';
+
 
 
 
@@ -21,6 +23,11 @@ export default function Page() {
     const [selectedTool, setSelectedTool] = useState<"CPR" | "defibrillator" | null>(null);
     const [defibrillatorsCount, setDefibrillatorsCount] = useState(0);
     const [lastDefibrillatorsTime, setLastDefibrillatorsTime] = useState<number | null>(null);
+    const [cprReady,setCprReady] = useState(true);
+    const [defiBrillatorsReady,setDefibrillatorsReady] = useState(false);
+    const [isRevived,setIsRevived] = useState(false);
+    const router = useRouter();
+    
 
     // Diagnosis submit handler
     const handleDiagnosisSubmit = () => {
@@ -60,13 +67,39 @@ export default function Page() {
         return () => clearInterval(interval);
     }, [timerActive]);
 
+    useEffect(() => {
+        if (cprCount % 30 === 0 && cprCount > 0) {
+            setDefibrillatorsReady(true);
+        } else {
+            setDefibrillatorsReady(false);
+        }
+
+    },[cprCount])
+
+    useEffect(() => {
+
+        if (!isRevived && cprCount >= 2 && defibrillatorsCount >= 1) {
+            setIsRevived(true);
+            setTimerActive(false);
+            console.log("Patient has revived!");
+            setSelectedTool(null);
+        }
+
+    },[cprCount,defibrillatorsCount,isRevived])
+
+
     //CPR click handler
     const handleCPRClick = () => {
         const now = Date.now();
         if (!lastCprTime || now - lastCprTime >= 1500) {
             setCprCount((prev) => prev + 1);
             setLastCprTime(now);
+            setCprReady(false);
             console.log("CPR given! Total: ", cprCount + 1);
+            setTimeout(() => {
+                setCprReady(true)
+            }, 1500);
+
         } else {
             console.log("Too soon! Spam click prevention.");
         }
@@ -79,6 +112,7 @@ export default function Page() {
             setDefibrillatorsCount((prev) => prev + 1);
             setLastDefibrillatorsTime(now);
             console.log("Defibrillators given! Total: ", defibrillatorsCount + 1);
+            setDefibrillatorsReady(false);
         } else {
             console.log("Too soon! Spam click prevention.");
         }
@@ -128,14 +162,14 @@ export default function Page() {
 
             {/*Compression counter*/}
             {selectedTool === "CPR" && hasCollapsed && (
-                <div className="mt-2 text-center font-mono text-lg text-blue-600">
+                <div className={`mt-2 text-center font-mono text-lg ${cprReady ? "text-green-500" : "text-red-500"} transition-colors duration-300`}>
                     Compressions: {cprCount}
                 </div>
             )}
 
             {/*Defibrillators counter*/}
             {selectedTool === "defibrillator" && hasCollapsed && (
-                <div className="mt-2 text-center font-mono text-lg text-blue-600">
+                <div className={`mt-2 text-center font-mono text-lg ${defiBrillatorsReady ?  "text-green-500" : "text-red-500"} transition-colors duration-100`}>
                     Defibrillators shocked: {defibrillatorsCount}
                 </div>
             )}
@@ -157,8 +191,20 @@ export default function Page() {
 
             {/*Vital signs*/}
             <div>
-                <VitalSigns isVisible={hasCollapsed} />
+                <VitalSigns isVisible={hasCollapsed} isRevived={isRevived} />
             </div>
+            
+            { isRevived && (
+                <div className='mt-6 text-center'>
+                    <button
+                    onClick={() => router.push("/pages/feedback")}
+                    className='px-6 py-3 bg-blue-600 text-white rounded-lg text-lg shadow-md'
+                    >
+                        End Simulation
+                    </button>
+
+                </div>
+            )}
 
         </div>
     )
