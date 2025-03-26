@@ -9,7 +9,7 @@ interface LogEntry {
     timestamp: string;
 }
 
-const ActivityLog: React.FC = () => {
+const ActivityLog: React.FC<{ simulationId: number | null }> = ({ simulationId }) => {
     //States
     const { user } = useAuth();
     const [log, setLog] = useState<LogEntry[]>([]);
@@ -37,7 +37,7 @@ const ActivityLog: React.FC = () => {
     //Log entry adder
     const addLogEntry = async (type: string, message: string) => {
         //If user or user.id is missing, return error message (for debugging purposes)
-        if (!user || !user.id) {
+        if (!user || !user.id || !simulationId) {
             console.warn("User ID is missing, skipping log entry.")
             return;
         }
@@ -58,20 +58,24 @@ const ActivityLog: React.FC = () => {
         });
 
         //Debugging console log to see if logs are send forward
-        console.log("Sending log entry: ", { user_id: user.id, ...newEntry });
+        console.log("Sending log entry: ", { user_id: user.id, simulation_id: simulationId, ...newEntry });
 
         //Fetch api/log
         await fetch("/api/log", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id: user.id, ...newEntry }),
+            body: JSON.stringify({
+                user_id: user.id,
+                simulation_id: simulationId,
+                ...newEntry
+            }),
         });
     };
 
     useEffect(() => {
         //Check if user is loaded(Debugging purposes)
         if (!user) {
-            console.warn("User not loaded yet, skipping event listener setup.");
+            console.warn("User or simulation id not loaded yet, skipping event listener setup.");
             return;
         }
         //Click handler which adds button click to log
@@ -129,7 +133,7 @@ const ActivityLog: React.FC = () => {
     }, [user, inputLogs]);
 
     //IF user or user_id is missing display loading activity log message in the website (debugging purposes)
-    if (!user || !user.id) {
+    if (!user || !user.id || !simulationId) {
         return <p className="text-gray-500 p-4">Loading activity log...</p>;
     }
 

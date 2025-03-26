@@ -6,13 +6,14 @@ import InterActiveMenu from '@/app/components/InterActiveMenu';
 import PatientDialogue from '@/app/components/PatientDialogue';
 import VitalSigns from '@/app/components/VitalSigns';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/context/AuthContext';
 
 
 
 
 export default function Page() {
     //States 
-    const [dialogue, setDialogue] = useState("I have chest pain, shortness of breath, and nausea.");
+    const [dialogue, setDialogue] = useState("Hey doc.");
     const [showContinue, setShowContinue] = useState(false);
     const [isDiagnosisOpen, setIsDiagnosisOpen] = useState(false);
     const [hasCollapsed, setHasCollapsed] = useState(false);
@@ -23,11 +24,15 @@ export default function Page() {
     const [selectedTool, setSelectedTool] = useState<"CPR" | "defibrillator" | null>(null);
     const [defibrillatorsCount, setDefibrillatorsCount] = useState(0);
     const [lastDefibrillatorsTime, setLastDefibrillatorsTime] = useState<number | null>(null);
-    const [cprReady,setCprReady] = useState(true);
-    const [defiBrillatorsReady,setDefibrillatorsReady] = useState(false);
-    const [isRevived,setIsRevived] = useState(false);
+    const [cprReady, setCprReady] = useState(true);
+    const [defiBrillatorsReady, setDefibrillatorsReady] = useState(false);
+    const [isRevived, setIsRevived] = useState(false);
     const router = useRouter();
-    
+    const [patientInfo, setPatientInfo] = useState<{ [key: string]: string }>({});
+    const [simulationId, setSimulationId] = useState<number | null>(null);
+    const { user } = useAuth();
+
+
 
     // Diagnosis submit handler
     const handleDiagnosisSubmit = () => {
@@ -67,25 +72,47 @@ export default function Page() {
         return () => clearInterval(interval);
     }, [timerActive]);
 
+    //Effect for defibrillator cue (CHANGE cprCount LATER TO 30 WHEN THE PROTOTYPE IS DONE!)
     useEffect(() => {
-        if (cprCount % 30 === 0 && cprCount > 0) {
+        if (cprCount % 2 === 0 && cprCount > 0) {
             setDefibrillatorsReady(true);
         } else {
             setDefibrillatorsReady(false);
         }
 
-    },[cprCount])
+    }, [cprCount])
 
+    //Effect for the patient revive (CHANGE THE cprCount and defibrillatorsCount to 30 and 2 WHEN THE PROTOTYPE IS DONE!)
     useEffect(() => {
-
         if (!isRevived && cprCount >= 2 && defibrillatorsCount >= 1) {
             setIsRevived(true);
             setTimerActive(false);
+            //Debugging console log
             console.log("Patient has revived!");
             setSelectedTool(null);
         }
 
-    },[cprCount,defibrillatorsCount,isRevived])
+    }, [cprCount, defibrillatorsCount, isRevived])
+
+    //Effect for the simulation start
+    useEffect(() => {
+        const startSimulation = async () => {
+            const res = await fetch("/api/start-simulation", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: user?.id }),
+            });
+
+            const data = await res.json();
+            //Debugging console log
+            console.log("DATA: ", data.simulation_id)
+            setSimulationId(data.simulation_id);
+        };
+
+        if (user?.id) {
+            startSimulation();
+        }
+    }, [user]);
 
 
     //CPR click handler
@@ -118,10 +145,15 @@ export default function Page() {
         }
     };
 
-
+    //Info handler for the patient information
+    const handleRevealInfo = (key: string, value: string) => {
+        setPatientInfo((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
 
     return (
-
         <div>
 
             {/*Interactive menu*/}
@@ -132,6 +164,7 @@ export default function Page() {
                     onSubmitDiagnosis={handleDiagnosisSubmit}
                     selectedTool={selectedTool}
                     setSelectedTool={setSelectedTool}
+                    patientInfo={patientInfo}
                 />
             </div>
 
@@ -160,51 +193,61 @@ export default function Page() {
                 </Image>
             </div>
 
-            {/*Compression counter*/}
-            {selectedTool === "CPR" && hasCollapsed && (
-                <div className={`mt-2 text-center font-mono text-lg ${cprReady ? "text-green-500" : "text-red-500"} transition-colors duration-300`}>
-                    Compressions: {cprCount}
-                </div>
-            )}
 
-            {/*Defibrillators counter*/}
-            {selectedTool === "defibrillator" && hasCollapsed && (
-                <div className={`mt-2 text-center font-mono text-lg ${defiBrillatorsReady ?  "text-green-500" : "text-red-500"} transition-colors duration-100`}>
-                    Defibrillators shocked: {defibrillatorsCount}
-                </div>
-            )}
 
             {/*Patient dialogue bar*/}
-            <div>
+
+            <div className="flex flex-col items-center absolute bottom-15 left-1/2 transform -translate-x-1/2 z-50">
+
+                {/*Compression counter*/}
+                {selectedTool === "CPR" && hasCollapsed && (
+                    <div className={`mt-2 text-center font-mono text-lg ${cprReady ? "text-green-500" : "text-red-500"} transition-colors duration-300`}>
+                        Compressions: {cprCount}
+                    </div>
+                )}
+
+                {/*Defibrillators counter*/}
+                {selectedTool === "defibrillator" && hasCollapsed && (
+                    <div className={`mt-2 text-center font-mono text-lg ${defiBrillatorsReady ? "text-green-500" : "text-red-500"} transition-colors duration-100`}>
+                        Defibrillators shocked: {defibrillatorsCount}
+                    </div>
+                )}
                 <PatientDialogue
                     message={dialogue}
                     showContinue={showContinue}
                     onContinue={handleContinue}
+                    onRevealInfo={handleRevealInfo}
+                    isVisible={!hasCollapsed}
+                    hasCollapsed={hasCollapsed}
                 />
+
+                {isRevived && (
+                    <div className='mt-8 text-center'>
+                        <button
+                            onClick={() => router.push("/pages/feedback")}
+                            className='px-6 py-3 bg-blue-600 text-white rounded-lg text-lg shadow-md'
+                        >
+                            End Simulation
+                        </button>
+
+                    </div>
+                )}
 
             </div>
 
             {/*Activity log*/}
             <div>
-                <ActivityLog />
+                {simulationId && (
+                    <ActivityLog simulationId={simulationId} />
+                )}
             </div>
 
             {/*Vital signs*/}
             <div>
                 <VitalSigns isVisible={hasCollapsed} isRevived={isRevived} />
             </div>
-            
-            { isRevived && (
-                <div className='mt-6 text-center'>
-                    <button
-                    onClick={() => router.push("/pages/feedback")}
-                    className='px-6 py-3 bg-blue-600 text-white rounded-lg text-lg shadow-md'
-                    >
-                        End Simulation
-                    </button>
 
-                </div>
-            )}
+
 
         </div>
     )

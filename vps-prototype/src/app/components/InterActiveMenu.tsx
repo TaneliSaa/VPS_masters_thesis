@@ -10,13 +10,15 @@ const InterActiveMenu = ({
     setIsDiagnosisOpen,
     onSubmitDiagnosis,
     selectedTool,
-    setSelectedTool
+    setSelectedTool,
+    patientInfo
 }: {
     isDiagnosisOpen: boolean;
     setIsDiagnosisOpen: (val: boolean) => void;
     onSubmitDiagnosis: () => void;
     selectedTool: "CPR" | "defibrillator" | null;
     setSelectedTool: (tool: "CPR" | "defibrillator" | null) => void;
+    patientInfo: { [key: string]: string };
 }) => {
 
     //States
@@ -163,6 +165,8 @@ const InterActiveMenu = ({
             <PatientInformation
                 isOpen={isPatientInformationOpen}
                 onClose={() => setIsPatientInformationOpen(false)}
+                data={patientInfo}
+                
             />
 
             <TakeTest

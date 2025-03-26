@@ -18,16 +18,11 @@ export default function FeedbackPage() {
             <h1 className="text-2xl font-bold mb-4"> Simulation Feedback</h1>
 
             <section className="mb-6">
-                <h2 className="text-xl font-semibold mb2"> Activity Summary</h2>
+                
                 <ActivityLogSummary />
 
             </section>
 
-            <section className="mb-6">
-                <h2 className="text-xl font-semibold mb2">Patient outcome</h2>
-                <p>SURVIVED</p>
-
-            </section>
 
             <form>
                 <div>
