@@ -8,9 +8,6 @@ import VitalSigns from '@/app/components/VitalSigns';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
 
-
-
-
 export default function Page() {
     //States 
     const [dialogue, setDialogue] = useState("Hey doc.");
@@ -107,6 +104,9 @@ export default function Page() {
             //Debugging console log
             console.log("DATA: ", data.simulation_id)
             setSimulationId(data.simulation_id);
+
+            const startTime = new Date().toISOString();
+            localStorage.setItem("simulationStartTime", startTime);
         };
 
         if (user?.id) {
@@ -125,7 +125,7 @@ export default function Page() {
             console.log("CPR given! Total: ", cprCount + 1);
             setTimeout(() => {
                 setCprReady(true)
-            }, 1500);
+            }, 1400);
 
         } else {
             console.log("Too soon! Spam click prevention.");
@@ -193,25 +193,36 @@ export default function Page() {
                 </Image>
             </div>
 
-
-
             {/*Patient dialogue bar*/}
-
             <div className="flex flex-col items-center absolute bottom-15 left-1/2 transform -translate-x-1/2 z-50">
 
-                {/*Compression counter*/}
+                {/*Show both CPR and defibrillators when CPR is selected*/}
                 {selectedTool === "CPR" && hasCollapsed && (
-                    <div className={`mt-2 text-center font-mono text-lg ${cprReady ? "text-green-500" : "text-red-500"} transition-colors duration-300`}>
-                        Compressions: {cprCount}
+                    <div>
+                        <div className={`mt-2 text-center font-mono text-lg ${cprReady ? "text-green-500" : "text-red-500"} transition-colors duration-100`}>
+                            Compressions: {cprCount}
+                        </div>
+
+                        <div className={`mt-2 text-center font-mono text-lg ${defiBrillatorsReady ? "text-green-500" : "text-red-500"} transition-colors duration-100`}>
+                            Defibrillators shocked: {defibrillatorsCount}
+                        </div>
                     </div>
                 )}
 
-                {/*Defibrillators counter*/}
+                {/*Show both CPR and defibrillators when CPR is selected*/}
                 {selectedTool === "defibrillator" && hasCollapsed && (
-                    <div className={`mt-2 text-center font-mono text-lg ${defiBrillatorsReady ? "text-green-500" : "text-red-500"} transition-colors duration-100`}>
-                        Defibrillators shocked: {defibrillatorsCount}
+                    <div>
+                        <div className={`mt-2 text-center font-mono text-lg ${cprReady ? "text-green-500" : "text-red-500"} transition-colors duration-300`}>
+                            Compressions: {cprCount}
+                        </div>
+
+                        <div className={`mt-2 text-center font-mono text-lg ${defiBrillatorsReady ? "text-green-500" : "text-red-500"} transition-colors duration-100`}>
+                            Defibrillators shocked: {defibrillatorsCount}
+                        </div>
                     </div>
                 )}
+
+                {/*Patient dialogue */}
                 <PatientDialogue
                     message={dialogue}
                     showContinue={showContinue}
@@ -221,10 +232,19 @@ export default function Page() {
                     hasCollapsed={hasCollapsed}
                 />
 
+                {/*End simulation button shown after the patient is revived */}
                 {isRevived && (
                     <div className='mt-8 text-center'>
                         <button
-                            onClick={() => router.push("/pages/feedback")}
+                            /*Pass information with URL params and redirect to the feedback page.*/
+                            onClick={() => {
+
+                                const endTime = new Date().toISOString();
+                                const startTime = localStorage.getItem("simulationStartTime")
+                                router.push(`/pages/feedback?simulationId=${simulationId}&cprCount=${cprCount}&defibCount=${defibrillatorsCount}&revealed=${Object.keys(patientInfo).join(",")}&startTime=${startTime}&endTime=${endTime}`)
+                            }
+
+                            }
                             className='px-6 py-3 bg-blue-600 text-white rounded-lg text-lg shadow-md'
                         >
                             End Simulation
@@ -246,9 +266,6 @@ export default function Page() {
             <div>
                 <VitalSigns isVisible={hasCollapsed} isRevived={isRevived} />
             </div>
-
-
-
         </div>
     )
 

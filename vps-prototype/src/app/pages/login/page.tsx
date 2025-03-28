@@ -8,10 +8,10 @@ export default function LoginPage() {
 
     //States
     const [username, setUsername] = useState("");
-    const [password,setPassword] = useState("");
-    const [id,setId] = useState("");
+    const [password, setPassword] = useState("");
+    const [id, setId] = useState("");
     const router = useRouter();
-    const {setUser} = useAuth();
+    const { setUser } = useAuth();
 
     //Login handler
     const handleLogin = async (e: React.FormEvent) => {
@@ -21,14 +21,15 @@ export default function LoginPage() {
         const res = await fetch("/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id,username, password }),
+            body: JSON.stringify({ id, username, password }),
         });
 
         if (res.ok) {
             alert("Login successful!");
-            setUser({id,username});
-            router.push("/pages/simulation");
-            
+            setUser({ id, username });
+            //Not the best method to use in real website. This forces the page to refresh when redirected to the simulation.
+            window.location.href = "/pages/simulation";
+
         } else {
             alert("Login failed");
         };

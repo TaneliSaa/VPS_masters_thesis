@@ -1,63 +1,40 @@
 "use client"
-
-
 import ActivityLogSummary from "@/app/components/ActivityLogSummary";
-import { useState } from "react"
+import QuizForm from "@/app/components/QuizForm";
+import { useSearchParams } from "next/navigation";
 
 export default function FeedbackPage() {
-    
-    //States
-    const [finalDiagnosis,setFinalDiagnosis] = useState("");
-    const [selfReflection,setSelfReflection] = useState("");
 
-
-    return(
+    //URL params variables
+    const searchParams = useSearchParams();
+    const simulationId = Number(searchParams.get("simulationId"));
+    const cprCount = parseInt(searchParams.get("cprCount") || "0", 10);
+    const defibCount = parseInt(searchParams.get("defibCount") || "0", 10);
+    const revealedParams = searchParams.get("revealed");
+    const revealedArray = revealedParams ? revealedParams.split(",") : [];
+    const requiredFields = ["symptoms", "age", "history", "medications", "lifestyle"];
+    const revealedCount = requiredFields.filter((key) => revealedArray.includes(key)).length;
+    const startTimeParam = searchParams.get("startTime");
+    const endTimeParam = searchParams.get("endTime");
+ 
+    return (
 
 
         <div className="max-w-4xl mx-auto p-6">
             <h1 className="text-2xl font-bold mb-4"> Simulation Feedback</h1>
 
             <section className="mb-6">
-                
-                <ActivityLogSummary />
+
+                <ActivityLogSummary simulationId={simulationId} cprCount={cprCount} defibCount={defibCount} revealedCount={revealedCount} requiredFields={requiredFields} startTime={startTimeParam} endTime={endTimeParam} />
 
             </section>
 
+            <section>
+                <QuizForm />
+            </section>
 
-            <form>
-                <div>
-                    <label className="block font-medium">
-                        Final diagnosis:
-                    </label>
-                    <input
-                        type="text"
-                        className="w-full p-2 border rounded-md"
-                        value={finalDiagnosis}
-                        onChange={(e) => setFinalDiagnosis(e.target.value)}
-                        placeholder="Your final diagnosis."
-                    >
-                    </input>
-                </div>
 
-                <div>
-                    <label className="block font-medium" >Self-Reflection</label>
-                    <textarea
-                        className="w-full p-2 border rounded-md"
-                        rows={4}
-                        value={selfReflection}
-                        onChange={(e) => setSelfReflection(e.target.value)}
-                        placeholder="What went well? Did you make right diagnosis?"
-                    >
-                    </textarea>
-                </div>
 
-                <button
-                    type="submit"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md "
-                >
-                    Submit Feedback
-                </button>
-            </form>
         </div>
     )
 }
