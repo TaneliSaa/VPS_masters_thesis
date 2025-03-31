@@ -1,3 +1,4 @@
+/* This is the interactive menu component which is displayed in the simulation page. */
 "use client";
 import { useEffect, useState } from "react";
 import PatientInformation from "./PatientInformation";
@@ -110,13 +111,13 @@ const InterActiveMenu = ({
                     <button
                         className="w-full text-left py-2 px-3 bg-gray-700 hover:bg-gray-600 rounded-md mt-2"
                         onClick={() => {
-                            setSelectedTest("Heart MRI");
+                            setSelectedTest("Heart CT");
                             setIsPatientInformationOpen(false);
                             setIsDiagnosisOpen(false);
                             setIsBloodTestOpen(false);
                         }}
                     >
-                        Heart MRI
+                        Heart CT
 
                     </button>
                 </div>
@@ -166,7 +167,7 @@ const InterActiveMenu = ({
                 isOpen={isPatientInformationOpen}
                 onClose={() => setIsPatientInformationOpen(false)}
                 data={patientInfo}
-                
+
             />
 
             <TakeTest

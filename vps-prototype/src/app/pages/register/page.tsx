@@ -1,3 +1,4 @@
+/* This is the register page of the simulation. This page do not have any purpose, it was made just for testing. */
 "use client"
 
 import { useRouter } from "next/navigation";
@@ -7,8 +8,8 @@ import { useState } from "react";
 export default function RegisterPage() {
 
     //States
-    const [username,setUsername] = useState("");
-    const [password,setPassword] = useState("");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
     const router = useRouter();
 
     //register handler
@@ -18,7 +19,7 @@ export default function RegisterPage() {
         const res = await fetch("/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({username,password}),
+            body: JSON.stringify({ username, password }),
         });
 
         if (res.ok) {
@@ -29,7 +30,7 @@ export default function RegisterPage() {
         }
     };
 
-    return(
+    return (
         <div className="p-4 border rounded-lg shadow-lg max-w-md mx-auto">
             <form onSubmit={handleRegister} className="flex flex-col gap-2">
                 <input

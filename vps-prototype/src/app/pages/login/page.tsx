@@ -1,3 +1,5 @@
+/* This is the login page of the simulation. */
+
 "use client"
 
 import { useRouter } from "next/navigation";

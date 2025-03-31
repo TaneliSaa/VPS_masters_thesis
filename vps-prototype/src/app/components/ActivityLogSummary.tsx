@@ -1,3 +1,4 @@
+/* Component for the activity log summary which is displayed in the feedback page. */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -9,7 +10,7 @@ interface LogEntry {
   timestamp: string;
 }
 
-const ActivityLogSummary: React.FC<{ simulationId: number; cprCount: number; defibCount: number; requiredFields: string[]; revealedCount: number; startTime: string | null; endTime: string | null }> = ({ simulationId, cprCount, defibCount, requiredFields, revealedCount, startTime, endTime }) => {
+const ActivityLogSummary: React.FC<{ simulationId: number; cprCount: number; defibCount: number; requiredFields: string[]; revealedCount: number; startTime: string | null; endTime: string | null; isDead: boolean }> = ({ simulationId, cprCount, defibCount, requiredFields, revealedCount, startTime, endTime, isDead }) => {
   const [log, setLog] = useState<LogEntry[]>([]);
   const { user } = useAuth();
 
@@ -31,9 +32,6 @@ const ActivityLogSummary: React.FC<{ simulationId: number; cprCount: number; def
   const seconds = start && end
     ? Math.floor(((end.getTime() - start.getTime()) / 1000) % 60) : 0;
 
-  //Outcome based on defib + CPR counts (for now its 2 and 1, BUT REMEMBER TO CHANGE THIS WHEN THE PROTOTYPE IS READY!)
-  const survived = cprCount >= 2 && defibCount >= 1;
-
   //Find the diagnosis from the logs
   const diagnosisEntry = log.find(entry => entry.message.toLowerCase().includes("diagnose text-area"));
   //Filter everything except the diagnosis
@@ -52,7 +50,7 @@ const ActivityLogSummary: React.FC<{ simulationId: number; cprCount: number; def
         <li><strong>Questions asked:</strong> {questionCount}</li>
         <li><strong>Total information revealed:</strong> {revealedCount} out of {requiredFields.length}</li>
         <li><strong>Total time spent:</strong> {minutes} minute and {seconds} seconds</li>
-        <li><strong>Patient outcome:</strong> {survived ? "Patient survived" : "Patient did not survive"}</li>
+        <li><strong>Patient outcome:</strong> {!isDead ? "Patient survived" : "Patient did not survive"}</li>
       </ul>
     </div>
   );

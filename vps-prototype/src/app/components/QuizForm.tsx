@@ -1,3 +1,4 @@
+/* This is the quiz form component which is displayed in the feedback page. */
 "use client"
 
 import { useState } from "react";
@@ -21,12 +22,120 @@ const quizQuestions: Question[] = [
 
     {
         id: 1,
-        text: "How many CPR do you must perform before using defibrillator?",
+        text: "What happens in sudden cardiac arrest?",
         options: [
-            { label: "A", text: "10" },
-            { label: "B", text: "15" },
-            { label: "C", text: "60" },
-            { label: "D", text: "30" },
+            { label: "A", text: "Heart beats very slowly" },
+            { label: "B", text: "Heart pumps too much blood" },
+            { label: "C", text: "Heart stops beating" },
+            { label: "D", text: "Heart skips heartbeat" },
+
+        ],
+        correct: "C"
+    },
+    {
+        id: 2,
+        text: "What is the difference between heart attack and sudden cardiac arrest?",
+        options: [
+            { label: "A", text: "In heart attack the heart stops beating and in sudden cardiac arrest it beats very slowly" },
+            { label: "B", text: "They are the same" },
+            { label: "C", text: "Heart attack is follow up to the sudden cardiac arrest" },
+            { label: "D", text: "Cardiac arrest is an electrical problem and heart attack is a circulation problem" },
+
+        ],
+        correct: "D"
+    },
+    {
+        id: 3,
+        text: "Why is CPR important?",
+        options: [
+            { label: "A", text: "It is the only way to restart heart" },
+            { label: "B", text: "Keeping the blood flow active increases the survival rate of the patient" },
+            { label: "C", text: "It increases the survival rate by 20%" },
+            { label: "D", text: "It is not important" },
+
+        ],
+        correct: "B"
+    },
+    {
+        id: 4,
+        text: "What is the primary cause of a heart attack?",
+        options: [
+            { label: "A", text: "Blockage in coronary arteries" },
+            { label: "B", text: "Heart pumps too much blood" },
+            { label: "C", text: "Getting scared" },
+            { label: "D", text: "Heart skips too many heart beats" },
+
+        ],
+        correct: "A"
+    },
+    {
+        id: 5,
+        text: "When should you use a defibrillator during cardiac arrest?",
+        options: [
+            { label: "A", text: "After 30 chest compressions" },
+            { label: "B", text: "After 60 chest compressions" },
+            { label: "C", text: "After performing CPR for 5 minutes" },
+            { label: "D", text: "As soon as it is available" },
+
+        ],
+        correct: "D"
+    },
+    {
+        id: 6,
+        text: "Which one of these options has highest potential to increase heart attack?",
+        options: [
+            { label: "A", text: "High blood pressure" },
+            { label: "B", text: "Age" },
+            { label: "C", text: "Diabetes" },
+            { label: "D", text: "Smoking" },
+
+        ],
+        correct: "A"
+    },
+    {
+        id: 7,
+        text: "How many chest compressions should be given per minute during CPR?",
+        options: [
+            { label: "A", text: "60-80" },
+            { label: "B", text: "80-100" },
+            { label: "C", text: "100-120" },
+            { label: "D", text: "120-140" },
+
+        ],
+        correct: "C"
+    },
+    {
+        id: 8,
+        text: "Which blood test results might suggest a heart attack?",
+        options: [
+            { label: "A", text: "High insulin" },
+            { label: "B", text: "Elevated troponin levels" },
+            { label: "C", text: "Low white blood cells" },
+            { label: "D", text: "Low red blood cells" },
+
+        ],
+        correct: "B"
+    },
+    {
+        id: 9,
+        text: "What is a major warning sign of sudden cardiac arrest?",
+        options: [
+            { label: "A", text: "Lost feeling of a limb" },
+            { label: "B", text: "Chest pain" },
+            { label: "C", text: "Nausea" },
+            { label: "D", text: "Sudden collapse and unresponsiveness" },
+
+        ],
+        correct: "D"
+    },
+    {
+        id: 10,
+        text: "Which part of the heart is most often affected during a heart attack?",
+        options: [
+            { label: "A", text: "Pulmonary valve" },
+            { label: "B", text: "Right atrium" },
+            { label: "C", text: "Aorta" },
+            { label: "D", text: "Left ventricle" },
 
         ],
         correct: "D"
@@ -128,7 +237,7 @@ const QuizForm: React.FC = () => {
                     </p>
                     <button
                         className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
-                        onClick={() => router.push("/pages/selfref")}
+                        onClick={() => router.push("/pages/reflection")}
                     >
                         Continue
                     </button>

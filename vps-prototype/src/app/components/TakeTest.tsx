@@ -1,24 +1,43 @@
+/* This is take test component which is part of the interactivity menu. Interactivity menu is displayed in the simulation page. */
 "use client"
 
 import Image from "next/image";
 
-const TakeTest = ({testType, isOpen, onClose}: {testType: string | null, isOpen: boolean, onClose: () => void}) => {
+const TakeTest = ({ testType, isOpen, onClose }: { testType: string | null, isOpen: boolean, onClose: () => void }) => {
     if (!isOpen || !testType) return null;
 
 
-    return(
+    return (
         <div className="fixed top-20 right-[20rem] w-96 p-4 bg white border rounder-lg shadow-lg z-40 text-black">
             <h2 className="text-lg font-bold capitalize">{testType.replace(/([A-Z])/g, '$1')}</h2>
-            <div className="mt-4">
-                <Image
-                    src="/Heart-attack-ecg.jpg"
-                    alt="ECG picture implementing heart attack."
-                    width={350}
-                    height={250}
-                    className="rounded-lg border"
-                >
-                </Image>
-            </div>
+
+
+            {testType === "EKG" &&
+                <div className="mt-4">
+                    <Image
+                        src="/Heart-attack-ecg.jpg"
+                        alt="ECG picture implementing heart attack."
+                        width={350}
+                        height={250}
+                        className="rounded-lg border"
+                    >
+                    </Image>
+                </div>
+            }
+
+            {testType === "Heart CT" &&
+                <div className="mt-4">
+                    <Image
+                        src="/acute-myocardial-infarction-1.jpg"
+                        alt="ECG picture implementing heart attack."
+                        width={350}
+                        height={250}
+                        className="rounded-lg border h-[500px] object-contain"
+                    >
+                    </Image>
+                </div>
+            }
+
 
             <button
                 onClick={onClose}

@@ -1,3 +1,4 @@
+/* Component for the blood test. This shows a blood test table. This component is part of the interactive menu which is shown in the simulation page. This is a pop-up */
 "use client";
 
 const BloodTestResults = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
@@ -7,7 +8,7 @@ const BloodTestResults = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
         <div className="fixed top-20 right-[20rem] w-[25rem] max-h-[70vh] p-4 bg-white border rounded-lg shadow-lg z-40 overflow-y-auto text-black">
             <h2 className="text-lg font-bold mb-3">Blood Test Results</h2>
 
-            
+
             {/* Complete blood test table to hint a heart attack (made to be as realistic as possible from the information took from internet) */}
             <table className="w-full border-collapse border border-gray-300">
                 <thead>

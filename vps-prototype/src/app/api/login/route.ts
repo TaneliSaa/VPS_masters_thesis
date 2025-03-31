@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 
     const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET as string);
 
-    const response = NextResponse.json({message: "Login successful!"});
+    const response = NextResponse.json({ message: "Login successful!" });
     response.headers.set(
       "Set-cookie",
       `token=${token}; path=/; HttpOnly; Secure; Max-Age=3600`

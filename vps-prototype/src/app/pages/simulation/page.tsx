@@ -1,3 +1,5 @@
+/* This is the main page of the simulation. */
+
 'use client'
 import Image from 'next/image'
 import { useEffect, useState } from 'react';
@@ -24,10 +26,13 @@ export default function Page() {
     const [cprReady, setCprReady] = useState(true);
     const [defiBrillatorsReady, setDefibrillatorsReady] = useState(false);
     const [isRevived, setIsRevived] = useState(false);
+    const [isDead, setIsDead] = useState(false);
     const router = useRouter();
     const [patientInfo, setPatientInfo] = useState<{ [key: string]: string }>({});
     const [simulationId, setSimulationId] = useState<number | null>(null);
     const { user } = useAuth();
+    const [treatmentStep, setTreatmentStep] = useState<"cpr1" | "defib1" | "cpr2" | "defib2" | "revive">("cpr1");
+    const [cycleCount, setCycleCount] = useState(0);
 
 
 
@@ -69,9 +74,9 @@ export default function Page() {
         return () => clearInterval(interval);
     }, [timerActive]);
 
-    //Effect for defibrillator cue (CHANGE cprCount LATER TO 30 WHEN THE PROTOTYPE IS DONE!)
+    //Effect for defibrillator cue
     useEffect(() => {
-        if (cprCount % 2 === 0 && cprCount > 0) {
+        if (treatmentStep === "defib1" || treatmentStep === "defib2") {
             setDefibrillatorsReady(true);
         } else {
             setDefibrillatorsReady(false);
@@ -79,17 +84,25 @@ export default function Page() {
 
     }, [cprCount])
 
-    //Effect for the patient revive (CHANGE THE cprCount and defibrillatorsCount to 30 and 2 WHEN THE PROTOTYPE IS DONE!)
+    //Effect for the patient revive
     useEffect(() => {
-        if (!isRevived && cprCount >= 2 && defibrillatorsCount >= 1) {
+        if (!isRevived && treatmentStep === "revive") {
             setIsRevived(true);
             setTimerActive(false);
+            setIsDead(false);
+            setDialogue("*cough* *cough*");
             //Debugging console log
             console.log("Patient has revived!");
             setSelectedTool(null);
+        } else if (!isRevived && timeLeft <= 0) {
+            setTimerActive(false);
+            setIsRevived(false);
+            setIsDead(true);
+            setSelectedTool(null);
+            setDialogue("...");
+            console.log("Patient has died.");
         }
-
-    }, [cprCount, defibrillatorsCount, isRevived])
+    }, [cprCount, defibrillatorsCount, isRevived, timeLeft])
 
     //Effect for the simulation start
     useEffect(() => {
@@ -118,14 +131,36 @@ export default function Page() {
     //CPR click handler
     const handleCPRClick = () => {
         const now = Date.now();
-        if (!lastCprTime || now - lastCprTime >= 1500) {
+        if (!lastCprTime || now - lastCprTime >= 500) {
+
             setCprCount((prev) => prev + 1);
             setLastCprTime(now);
             setCprReady(false);
             console.log("CPR given! Total: ", cprCount + 1);
             setTimeout(() => {
                 setCprReady(true)
-            }, 1400);
+            }, 350);
+
+            if (treatmentStep === "cpr1" || treatmentStep === "cpr2") {
+
+                setCycleCount((prev) => {
+                    const updated = prev + 1;
+
+                    if (updated === 30) {
+                        setTreatmentStep(treatmentStep === "cpr1" ? "defib1" : "defib2");
+                        return 0;
+                    } else if (updated > 30) {
+                        console.log("Too many CPR given in a cycle.")
+                        setTreatmentStep("cpr1");
+                        return 0;
+                    }
+
+                    return updated;
+                });
+            } else {
+                setTreatmentStep("cpr1");
+                setCycleCount(0);
+            }
 
         } else {
             console.log("Too soon! Spam click prevention.");
@@ -136,10 +171,28 @@ export default function Page() {
     const handleDefibrillatorsClick = () => {
         const now = Date.now();
         if (!lastDefibrillatorsTime || now - lastDefibrillatorsTime >= 2000) {
-            setDefibrillatorsCount((prev) => prev + 1);
-            setLastDefibrillatorsTime(now);
-            console.log("Defibrillators given! Total: ", defibrillatorsCount + 1);
-            setDefibrillatorsReady(false);
+
+            if (treatmentStep === "defib1") {
+                setDefibrillatorsCount((prev) => prev + 1);
+                setLastDefibrillatorsTime(now);
+                console.log("Defibrillators given! Total: ", defibrillatorsCount + 1);
+                setDefibrillatorsReady(false);
+                setTreatmentStep("cpr2");
+            } else if (treatmentStep === "defib2") {
+                setDefibrillatorsCount((prev) => prev + 1);
+                setLastDefibrillatorsTime(now);
+                console.log("Defibrillators given! Total: ", defibrillatorsCount + 1);
+                setDefibrillatorsReady(false);
+                setTreatmentStep("revive");
+            } else {
+                setDefibrillatorsCount((prev) => prev + 1);
+                setLastDefibrillatorsTime(now);
+                console.log("Defibrillators given! Total: ", defibrillatorsCount + 1);
+                setDefibrillatorsReady(false);
+                setTreatmentStep("cpr1");
+                setCycleCount(0);
+            }
+
         } else {
             console.log("Too soon! Spam click prevention.");
         }
@@ -197,7 +250,7 @@ export default function Page() {
             <div className="flex flex-col items-center absolute bottom-15 left-1/2 transform -translate-x-1/2 z-50">
 
                 {/*Show both CPR and defibrillators when CPR is selected*/}
-                {selectedTool === "CPR" && hasCollapsed && (
+                {(selectedTool === "CPR" || selectedTool === "defibrillator") && hasCollapsed && (
                     <div>
                         <div className={`mt-2 text-center font-mono text-lg ${cprReady ? "text-green-500" : "text-red-500"} transition-colors duration-100`}>
                             Compressions: {cprCount}
@@ -206,21 +259,11 @@ export default function Page() {
                         <div className={`mt-2 text-center font-mono text-lg ${defiBrillatorsReady ? "text-green-500" : "text-red-500"} transition-colors duration-100`}>
                             Defibrillators shocked: {defibrillatorsCount}
                         </div>
+
+                        <div> {treatmentStep} </div>
                     </div>
                 )}
 
-                {/*Show both CPR and defibrillators when CPR is selected*/}
-                {selectedTool === "defibrillator" && hasCollapsed && (
-                    <div>
-                        <div className={`mt-2 text-center font-mono text-lg ${cprReady ? "text-green-500" : "text-red-500"} transition-colors duration-300`}>
-                            Compressions: {cprCount}
-                        </div>
-
-                        <div className={`mt-2 text-center font-mono text-lg ${defiBrillatorsReady ? "text-green-500" : "text-red-500"} transition-colors duration-100`}>
-                            Defibrillators shocked: {defibrillatorsCount}
-                        </div>
-                    </div>
-                )}
 
                 {/*Patient dialogue */}
                 <PatientDialogue
@@ -232,8 +275,8 @@ export default function Page() {
                     hasCollapsed={hasCollapsed}
                 />
 
-                {/*End simulation button shown after the patient is revived */}
-                {isRevived && (
+                {/*End simulation button shown after the patient is revived or dead */}
+                {(isRevived || isDead) && (
                     <div className='mt-8 text-center'>
                         <button
                             /*Pass information with URL params and redirect to the feedback page.*/
@@ -241,7 +284,7 @@ export default function Page() {
 
                                 const endTime = new Date().toISOString();
                                 const startTime = localStorage.getItem("simulationStartTime")
-                                router.push(`/pages/feedback?simulationId=${simulationId}&cprCount=${cprCount}&defibCount=${defibrillatorsCount}&revealed=${Object.keys(patientInfo).join(",")}&startTime=${startTime}&endTime=${endTime}`)
+                                router.push(`/pages/feedback?simulationId=${simulationId}&cprCount=${cprCount}&defibCount=${defibrillatorsCount}&revealed=${Object.keys(patientInfo).join(",")}&startTime=${startTime}&endTime=${endTime}&isDead=${isDead}`)
                             }
 
                             }

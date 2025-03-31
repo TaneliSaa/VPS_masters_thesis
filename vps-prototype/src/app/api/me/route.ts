@@ -7,19 +7,19 @@ import jwt from "jsonwebtoken";
 
 export async function GET(req: Request) {
 
-    try{
+    try {
         //this splits the token from the cookies
         const token = req.headers.get("cookie")?.split("token=")[1]?.split(";")[0];
-        
+
         //If there is no token in the cookies, give error message
         if (!token) {
-            return NextResponse.json({message: "Not authenticated"}, {status: 401});
+            return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
         }
 
         //Verify the token
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-        return NextResponse.json({user: decoded});
-    }   catch (error) {
-        return NextResponse.json({message: "Invalid token."}, {status: 401});
+        return NextResponse.json({ user: decoded });
+    } catch (error) {
+        return NextResponse.json({ message: "Invalid token." }, { status: 401 });
     }
 }

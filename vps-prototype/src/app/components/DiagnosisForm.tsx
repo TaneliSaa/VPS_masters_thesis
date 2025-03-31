@@ -1,3 +1,4 @@
+/* Component for the diagnosis form. This is part of the interactive menu which is shown in the simulation page. This is a pop-up */
 "use client"
 
 import { useState } from "react";

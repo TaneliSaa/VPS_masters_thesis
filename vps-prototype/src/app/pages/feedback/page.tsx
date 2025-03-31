@@ -1,3 +1,5 @@
+/* This is the feedback page of the simulation. */
+
 "use client"
 import ActivityLogSummary from "@/app/components/ActivityLogSummary";
 import QuizForm from "@/app/components/QuizForm";
@@ -16,7 +18,7 @@ export default function FeedbackPage() {
     const revealedCount = requiredFields.filter((key) => revealedArray.includes(key)).length;
     const startTimeParam = searchParams.get("startTime");
     const endTimeParam = searchParams.get("endTime");
- 
+
     return (
 
 
