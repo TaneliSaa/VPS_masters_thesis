@@ -18,6 +18,9 @@ export default function FeedbackPage() {
     const revealedCount = requiredFields.filter((key) => revealedArray.includes(key)).length;
     const startTimeParam = searchParams.get("startTime");
     const endTimeParam = searchParams.get("endTime");
+    const isDead = searchParams.get("isDead");
+    const isDeadParam = isDead === "true";
+
 
     return (
 
@@ -27,16 +30,14 @@ export default function FeedbackPage() {
 
             <section className="mb-6">
 
-                <ActivityLogSummary simulationId={simulationId} cprCount={cprCount} defibCount={defibCount} revealedCount={revealedCount} requiredFields={requiredFields} startTime={startTimeParam} endTime={endTimeParam} />
+                <ActivityLogSummary simulationId={simulationId} cprCount={cprCount} defibCount={defibCount} revealedCount={revealedCount} requiredFields={requiredFields} startTime={startTimeParam} endTime={endTimeParam} isDead={isDeadParam} />
 
             </section>
 
             <section>
                 <QuizForm />
             </section>
-
-
-
+            
         </div>
     )
 }

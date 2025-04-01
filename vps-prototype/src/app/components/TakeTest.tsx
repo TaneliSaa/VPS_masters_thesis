@@ -1,5 +1,5 @@
 /* This is take test component which is part of the interactivity menu. Interactivity menu is displayed in the simulation page. */
-"use client"
+
 
 import Image from "next/image";
 
@@ -20,8 +20,7 @@ const TakeTest = ({ testType, isOpen, onClose }: { testType: string | null, isOp
                         width={350}
                         height={250}
                         className="rounded-lg border"
-                    >
-                    </Image>
+                    />
                 </div>
             }
 
@@ -33,8 +32,7 @@ const TakeTest = ({ testType, isOpen, onClose }: { testType: string | null, isOp
                         width={350}
                         height={250}
                         className="rounded-lg border h-[500px] object-contain"
-                    >
-                    </Image>
+                    />
                 </div>
             }
 

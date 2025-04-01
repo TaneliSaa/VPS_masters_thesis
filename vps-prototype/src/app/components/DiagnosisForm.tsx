@@ -13,9 +13,9 @@ const DiagnosisForm = ({
     onSubmitDiagnosis: () => void;
 }) => {
 
-    const [diagnosis, setDiagnosis] = useState("");
-
     if (!isOpen) return null;
+
+    const [diagnosis, setDiagnosis] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

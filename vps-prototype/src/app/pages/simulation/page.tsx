@@ -1,6 +1,7 @@
 /* This is the main page of the simulation. */
 
-'use client'
+"use client"
+
 import Image from 'next/image'
 import { useEffect, useState } from 'react';
 import ActivityLog from '@/app/components/ActivityLog';
@@ -235,6 +236,7 @@ export default function Page() {
                     alt='Picture of the patient sitting'
                     width="500"
                     height="500"
+                    priority
                     onClick={() => {
                         if (selectedTool === "CPR" && hasCollapsed) {
                             handleCPRClick();
@@ -259,8 +261,8 @@ export default function Page() {
                         <div className={`mt-2 text-center font-mono text-lg ${defiBrillatorsReady ? "text-green-500" : "text-red-500"} transition-colors duration-100`}>
                             Defibrillators shocked: {defibrillatorsCount}
                         </div>
-
-                        <div> {treatmentStep} </div>
+                        {/*<div> {treatmentStep} </div> */}
+                        
                     </div>
                 )}
 

@@ -1,5 +1,5 @@
 /* Component for the activity log displayed in the simulation page. */
-"use client";
+"use client"
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 

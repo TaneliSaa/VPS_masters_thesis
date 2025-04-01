@@ -1,5 +1,5 @@
 /* This is the patient dialogue component which is displayed in the simulation page. */
-"use client";
+"use client"
 
 import { useEffect, useState } from "react";
 

@@ -1,5 +1,5 @@
 /* This is the patient information component which is a part of the interactive menu component which is displayed in the simulation page. */
-"use client"
+
 
 const PatientInformation = ({
     isOpen,

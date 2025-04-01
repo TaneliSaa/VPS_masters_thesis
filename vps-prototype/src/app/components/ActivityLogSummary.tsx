@@ -1,5 +1,5 @@
 /* Component for the activity log summary which is displayed in the feedback page. */
-"use client";
+"use client"
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";

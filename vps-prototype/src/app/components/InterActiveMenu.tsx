@@ -1,5 +1,5 @@
 /* This is the interactive menu component which is displayed in the simulation page. */
-"use client";
+"use client"
 import { useEffect, useState } from "react";
 import PatientInformation from "./PatientInformation";
 import TakeTest from "./TakeTest";
