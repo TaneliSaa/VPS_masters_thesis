@@ -15,7 +15,7 @@ const TakeTest = ({ testType, isOpen, onClose }: { testType: string | null, isOp
             {testType === "EKG" &&
                 <div className="mt-4">
                     <Image
-                        src="/Heart-attack-ecg.jpg"
+                        src=""
                         alt="ECG picture implementing heart attack."
                         width={350}
                         height={250}
